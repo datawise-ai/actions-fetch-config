@@ -98,8 +98,18 @@ runs:
         python-version: '3.12'  
 
     - name: Install Dependencies
-      run: pip install -r requirements.txt
-      shell: bash
+      shell: bash    
+      run: |
+        cat <<EOF | xargs pip install
+        boto3==1.40.47
+        botocore==1.40.47
+        jmespath==1.0.1
+        python-dateutil==2.9.0.post0
+        PyYAML==6.0.3
+        s3transfer==0.14.0
+        six==1.17.0
+        urllib3==2.5.0
+        EOF
 
     - name: Fetch the number's square
       id: secret-fercher
