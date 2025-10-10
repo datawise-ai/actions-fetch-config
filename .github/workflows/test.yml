@@ -9,49 +9,50 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   test:
     name: test
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Test
-      uses: ./
-      with:
-        ACTION_ARGUMENTS: "--test"
-        SECRETS_2_GITHUB_ENV: true
-        MASK_VALUES: false
+      - name: Test
+        uses: ./
+        with:
+          ACTION_ARGUMENTS: "--test"
+          SECRETS_2_GITHUB_ENV: true
+          MASK_VALUES: false
 
-    - name: check env vars
-      shell: bash
-      run:
-        env | grep FETCHER | sort
+      - name: check env vars
+        shell: bash
+        run:
+          env | grep FETCHER | sort
 
 
-    - name: Test quotes
-      uses: ./
-      with:
-        ACTION_ARGUMENTS: "--test"
-        ADD_QUOTES_TO_ENVVAR_VALUES: true
-        SECRETS_2_GITHUB_ENV: true
-        MASK_VALUES: false
+      - name: Test quotes
+        uses: ./
+        with:
+          ACTION_ARGUMENTS: "--test"
+          ADD_QUOTES_TO_ENVVAR_VALUES: true
+          SECRETS_2_GITHUB_ENV: true
+          MASK_VALUES: false
 
-    - name: check env vars
-      shell: bash
-      run:
-        env | grep FETCHER | sort
+      - name: check env vars
+        shell: bash
+        run:
+          env | grep FETCHER | sort
 
-    - name: Test mask
-      uses: ./
-      with:
-        ACTION_ARGUMENTS: "--test"
-        ADD_QUOTES_TO_ENVVAR_VALUES: true
-        SECRETS_2_GITHUB_ENV: true
-        MASK_VALUES: true
+      - name: Test mask
+        uses: ./
+        with:
+          ACTION_ARGUMENTS: "--test"
+          ADD_QUOTES_TO_ENVVAR_VALUES: true
+          SECRETS_2_GITHUB_ENV: true
+          MASK_VALUES: true
 
-    - name: check env vars
-      shell: bash
-      run:
-        env | grep FETCHER | sort        
+      - name: check env vars
+        shell: bash
+        run:
+          env | grep FETCHER | sort        

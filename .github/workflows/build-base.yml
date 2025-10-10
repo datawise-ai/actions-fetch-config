@@ -1,0 +1,66 @@
+name: build base
+
+on:
+  push:
+    tags: ["base/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  build:
+    if: ${{ github.repository_owner }} == "bitbool-actions"
+    name: build
+    runs-on: ubuntu-latest    
+    permissions:
+      contents: read
+      packages: write  # required to push to GHCR    
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set image name
+        id: vars
+        run: echo "IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/$(basename ${{ github.repository }})" >> $GITHUB_ENV
+
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=true
+          tags: |
+            type=semver,priority=1000,pattern={{version}},match=v(\d.\d.*)$
+            type=sha,priority=900
+            type=ref,priority=800,event=tag
+            type=ref,priority=700,event=branch
+            type=ref,priority=600,event=pr
+            type=raw,priority=500,value={{date 'YYYYMMDD_HHmmss_TS'}}        
+
+
+      - name: Build and push
+        id: docker_build_gha
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.base
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          no-cache: false
+          cache-from: type=gha
+          cache-to: type=gha
