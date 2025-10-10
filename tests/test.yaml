@@ -1,0 +1,12 @@
+---
+"FETCHER_yaml_key1": "FETCHER_yaml_value1"
+"FETCHER_yaml_key2": FETCHER_yaml_value2
+"FETCHER_yaml_key3": "FETCHER_yaml value2  ~!@#$%^&*()_+{}|\":'?><"
+"FETCHER_yaml_key4": 
+    "FETCHER_yaml_key4_subkey1": "FETCHER_yaml_key4_subvalue1"
+    "FETCHER_yaml_key4_subkey2": 
+      "FETCHER_yaml_key4_subkey2_subkey1" : "FETCHER_yaml_key4_subkey2_subkey1"
+      "FETCHER_yaml_key4_subkey2_subkey2" : "FETCHER_yaml_key4_subkey2_subkey2"
+FETCHER_yaml_key5: FETCHER_yaml_value5
+## Multiple Documents raise errors
+## ---

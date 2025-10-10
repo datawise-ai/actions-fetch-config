@@ -1,0 +1,5 @@
+FETCHER_env_key1=FETCHER_env_value1
+FETCHER_env_key2=FETCHER_env_value2
+FETCHER_env_key3="FETCHER_env value2  ~!@#$%^&*()_+{}|\":'?><"
+FETCHER_env_key4='FETCHER_env_value4' 
+FETCHER_env_key5 = FETCHER_env_value5

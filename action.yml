@@ -1,0 +1,127 @@
+name: "secret fetcher"
+
+branding:
+  color: green
+  icon: key
+
+description: |
+  Downloads a secret and saves it to
+    * a json file (converted to json if required)
+    * a yaml file (converted to yaml if required)
+    * a "plain" file (== as is)
+    * an environment file (converted to key=value)
+    * github environment
+    * current environment
+inputs:
+  SECRET_NAMES:
+    description: |
+      If set, the action will assume that each secret is ONE Value, that needs to be assigned to this environment variable. 
+      Used for secrets that contain only the value, in order to assign env var X to value. It does not alter the rest of the behavior.
+      Only works for secrets determined as plain type.
+    required: false
+## AWS
+  AWS_SECRET_IDS:
+    description: 'AWS secret ids, comma separated if required. Not arn, just the path'
+    required: false
+  AWS_ACCESS_KEY_ID:
+    description: 'AWS Access key id'
+    required: false
+  AWS_SECRET_ACCESS_KEY:
+    description: 'AWS secret access key'
+    required: false
+  AWS_REGION:
+    description: 'AWS region'
+    required: false
+    default:  "us-east-1"
+## Targets:
+  SECRETS_2_YAML_FILE:
+    description: 'save secret to this yaml file. If comma separated, each file will be used for the equivalent comma separated secret'
+    required: false
+    default: ''
+  SECRETS_2_JSON_FILE:
+    description: 'save secret to this json file. If comma separated, each file will be used for the equivalent comma separated secret'
+    required: false
+    default: ''
+  SECRETS_2_PLAIN_FILE:
+    description: 'save secret to this plain file (no convertion). If comma separated, each file will be used for the equivalent comma separated secret'
+    required: false
+    default: ''
+  SECRETS_2_ENV_FILE:
+    description: 'save secret to this environment file (key=value). If comma separated, each file will be used for the equivalent comma separated secret'
+    required: false
+    default: ''
+  SECRETS_2_GITHUB_ENV:
+    description: 'add secrets to github env'
+    required: false
+    default: false
+  SECRETS_2_RUNNER_ENV:
+    description: 'add secrets to current env'
+    required: false
+    default: false
+## Behavior changes
+  MASK_VALUES:
+    description: 'if set, masks values in github'
+    required: false
+    default: true
+  LOG_LEVEL:
+    description: 'set the log level (INFO|WARNING|DEBUG)'
+    required: false
+    default: 'INFO'
+  APPEND_TO_FILES:
+    description: 'if set, it appends the secret to the specified file(s). Ignored for github env'
+    required: false
+    default: false
+  ADD_QUOTES_TO_ENVVAR_VALUES:
+    description: 'if set, forcibly quotes the values when output and env file'
+    required: false
+    default: false
+  QUOTES_TO_ADD:
+    description: 'if adding quotes, signle or double?'
+    required: false
+    default: 'double'
+  SECRETS_2_YAML_HEADER:
+    description: 'if set, the output yaml is moved under this key. Multiple levels are not supported, single key only'
+    required: false
+    default: ''
+##MISC
+  ACTION_ARGUMENTS:
+    description: 'provide additional command line arguments'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'  
+
+    - name: Install Dependencies
+      run: pip install -r requirements.txt
+      shell: bash
+
+    - name: Fetch the number's square
+      id: secret-fercher
+
+      run: python main.py ${{ inputs.ACTION_ARGUMENTS }}
+      shell: bash
+      env:
+        INPUT_SECRET_NAMES: ${{ inputs.SECRET_NAMES }}
+        INPUT_AWS_SECRET_IDS: ${{ inputs.AWS_SECRET_IDS }}
+        INPUT_AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        INPUT_AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        INPUT_AWS_REGION: ${{ inputs.AWS_REGION }}
+        INPUT_SECRETS_2_YAML_FILE: ${{ inputs.SECRETS_2_YAML_FILE }}
+        INPUT_SECRETS_2_JSON_FILE: ${{ inputs.SECRETS_2_JSON_FILE }}
+        INPUT_SECRETS_2_PLAIN_FILE: ${{ inputs.SECRETS_2_PLAIN_FILE }}
+        INPUT_SECRETS_2_ENV_FILE: ${{ inputs.SECRETS_2_ENV_FILE }}
+        INPUT_SECRETS_2_GITHUB_ENV: ${{ inputs.SECRETS_2_GITHUB_ENV }}
+        INPUT_SECRETS_2_RUNNER_ENV: ${{ inputs.SECRETS_2_RUNNER_ENV }}
+        INPUT_MASK_VALUES: ${{ inputs.MASK_VALUES }}
+        INPUT_LOG_LEVEL: ${{ inputs.LOG_LEVEL }}
+        INPUT_APPEND_TO_FILES: ${{ inputs.APPEND_TO_FILES }}
+        INPUT_ADD_QUOTES_TO_ENVVAR_VALUES: ${{ inputs.ADD_QUOTES_TO_ENVVAR_VALUES }}
+        INPUT_QUOTES_TO_ADD: ${{ inputs.QUOTES_TO_ADD }}
+        INPUT_SECRETS_2_YAML_HEADER: ${{ inputs.SECRETS_2_YAML_HEADER }}
+        INPUT_ACTION_ARGUMENTS: ${{ inputs.ACTION_ARGUMENTS }}
