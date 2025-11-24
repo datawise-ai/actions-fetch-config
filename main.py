@@ -45,7 +45,7 @@ def input_to_array(envvar):
 			if isinstance(result, list):
 				result_list = result
 			else:
-				result_list = [result]
+				result_list = result.split(",")
 			logger.debug(f"Returning value for {envvar}: ${result}")
 			return result_list
 		return([])
